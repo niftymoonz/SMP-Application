@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMP Application — IsThatTheo</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #1D9E75; --bg: #0a0d0b; --bg2: #111510; --bg3: #161c14;
+    --border: rgba(29,158,117,0.18); --border2: rgba(29,158,117,0.35);
+    --text: #e8f0ec; --text2: #8aab97; --text3: #4e7060; --amber: #BA7517;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2rem 1rem 4rem; }
+  body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 60% 40% at 20% 10%, rgba(29,158,117,0.07) 0%, transparent 70%), radial-gradient(ellipse 40% 30% at 80% 80%, rgba(83,74,183,0.05) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+  .wrap { max-width: 700px; margin: 0 auto; position: relative; z-index: 1; }
+  .header { border: 1px solid var(--border2); border-radius: 16px; padding: 2rem; margin-bottom: 1rem; background: var(--bg2); display: flex; align-items: center; gap: 1.25rem; position: relative; overflow: hidden; }
+  .header::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--green), transparent); }
+  .avatar { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--green); background: rgba(29,158,117,0.12); display: flex; align-items: center; justify-content: center; font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: var(--green); flex-shrink: 0; }
+  .username { font-family: 'Rajdhani', sans-serif; font-size: 28px; font-weight: 700; color: var(--text); letter-spacing: 0.02em; }
+  .tagline { font-size: 13px; color: var(--text2); margin-top: 3px; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 6px; letter-spacing: 0.03em; }
+  .badge-green { background: rgba(29,158,117,0.15); color: #4dcfa0; border: 1px solid rgba(29,158,117,0.3); }
+  .badge-purple { background: rgba(83,74,183,0.15); color: #a09cf5; border: 1px solid rgba(83,74,183,0.3); }
+  .badge-amber { background: rgba(186,117,23,0.15); color: #f0b84a; border: 1px solid rgba(186,117,23,0.3); }
+  .badge-blue { background: rgba(24,95,165,0.15); color: #6baee8; border: 1px solid rgba(24,95,165,0.3); }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; animation: fadeUp 0.4s ease both; }
+  .card:nth-child(2){animation-delay:.05s}.card:nth-child(3){animation-delay:.1s}.card:nth-child(4){animation-delay:.15s}.card:nth-child(5){animation-delay:.2s}.card:nth-child(6){animation-delay:.25s}.card:nth-child(7){animation-delay:.3s}
+  .card-title { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
+  .card-title::before { content: ''; display: inline-block; width: 14px; height: 2px; background: var(--green); border-radius: 2px; }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+  .stat { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+  .stat-label { font-size: 11px; color: var(--text3); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-value { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 600; color: var(--text); }
+  .achievement { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .achievement:last-child { border-bottom: none; padding-bottom: 0; }
+  .ach-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+  .ach-text { font-size: 14px; color: var(--text); line-height: 1.4; }
+  .ach-sub { font-size: 12px; color: var(--text2); margin-top: 3px; }
+  .skill-section-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin: 16px 0 10px; font-weight: 500; }
+  .skill-section-label:first-child { margin-top: 0; }
+  .skill-row { display: flex; align-items: center; gap: 12px; margin-bottom: 9px; }
+  .skill-row:last-child { margin-bottom: 0; }
+  .skill-name { font-size: 13px; color: var(--text); min-width: 120px; }
+  .bar-bg { flex: 1; height: 5px; background: var(--bg3); border-radius: 99px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 99px; }
+  .bar-green { background: var(--green); }
+  .bar-blue { background: #378ADD; }
+  .bar-amber { background: var(--amber); }
+  .skill-pill { font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 99px; min-width: 52px; text-align: center; }
+  .pill-green { background: rgba(29,158,117,0.15); color: #4dcfa0; }
+  .pill-blue { background: rgba(55,138,221,0.15); color: #6baee8; }
+  .pill-amber { background: rgba(186,117,23,0.15); color: #f0b84a; }
+  .project-block { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; animation: pulse 2s infinite; }
+  .project-name { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 600; color: var(--text); }
+  .project-desc { font-size: 12px; color: var(--text2); margin-top: 3px; }
+  .about-text { font-size: 14px; color: var(--text2); line-height: 1.7; }
+  .header { animation: fadeUp 0.4s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(29,158,117,0.4); } 50% { opacity: 0.8; box-shadow: 0 0 0 5px rgba(29,158,117,0); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="avatar">IT</div>
+    <div style="flex:1">
+      <div class="username">IsThatTheo</div>
+      <div class="tagline">Bedrock PvP · Zeqa · Content Creator · Developer</div>
+      <div class="badge-row">
+        <span class="badge badge-green">PvP</span>
+        <span class="badge badge-green">Cart PvP</span>
+        <span class="badge badge-purple">Zeqa</span>
+        <span class="badge badge-amber">Content Creator</span>
+        <span class="badge badge-blue">C++ / C# / HTML</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">About Me</div>
+    <p class="about-text">I'm Theo, 14. I play Bedrock PvP and am respected on Zeqa. I'm good at cart PvP and love competing against top players. I also code in C++, C#, and HTML. On the side I'm learning to edit videos and make thumbnails.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Player Stats</div>
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-label">Main Server</div><div class="stat-value">Zeqa</div></div>
+      <div class="stat"><div class="stat-label">Playstyle</div><div class="stat-value">PvP / Cart</div></div>
+      <div class="stat"><div class="stat-label">Platform</div><div class="stat-value">Bedrock</div></div>
+      <div class="stat"><div class="stat-label">Reputation</div><div class="stat-value">Respected</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Achievements</div>
+    <div class="achievement">
+      <div class="ach-icon" style="background:rgba(186,117,23,0.12);">🏆</div>
+      <div>
+        <div class="ach-text">Played with the #1 Hive Bridge player</div>
+        <div class="ach-sub">Hive Network · Bridge</div>
+      </div>
+    </div>
+    <div class="achievement">
+      <div class="ach-icon" style="background:rgba(29,158,117,0.12);">⚔️</div>
+      <div>
+        <div class="ach-text">Beat the #1 LifeBoat Bedwars player in a duel</div>
+        <div class="ach-sub">LifeBoat Network · Bedwars</div>
+      </div>
+    </div>
+    <div class="achievement">
+      <div class="ach-icon" style="background:rgba(83,74,183,0.12);">🛡️</div>
+      <div>
+        <div class="ach-text">Known and respected on Zeqa</div>
+        <div class="ach-sub">Zeqa · PvP</div>
+      </div>
+    </div>
+    <div class="achievement">
+      <div class="ach-icon" style="background:rgba(24,95,165,0.12);">💻</div>
+      <div>
+        <div class="ach-text">Expert in C++, C#, and HTML</div>
+        <div class="ach-sub">Coding · Web · Game dev</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Skills</div>
+    <div class="skill-section-label">Gaming</div>
+    <div class="skill-row">
+      <span class="skill-name">PvP</span>
+      <div class="bar-bg"><div class="bar-fill bar-green" style="width:88%"></div></div>
+      <span class="skill-pill pill-green">Expert</span>
+    </div>
+    <div class="skill-row">
+      <span class="skill-name">Cart PvP</span>
+      <div class="bar-bg"><div class="bar-fill bar-green" style="width:85%"></div></div>
+      <span class="skill-pill pill-green">Expert</span>
+    </div>
+    <div class="skill-row">
+      <span class="skill-name">Bedwars</span>
+      <div class="bar-bg"><div class="bar-fill bar-green" style="width:75%"></div></div>
+      <span class="skill-pill pill-green">Advanced</span>
+    </div>
+    <div class="skill-section-label">Coding</div>
+    <div class="skill-row">
+      <span class="skill-name">C++</span>
+      <div class="bar-bg"><div class="bar-fill bar-blue" style="width:95%"></div></div>
+      <span class="skill-pill pill-blue">Expert</span>
+    </div>
+    <div class="skill-row">
+      <span class="skill-name">C#</span>
+      <div class="bar-bg"><div class="bar-fill bar-blue" style="width:95%"></div></div>
+      <span class="skill-pill pill-blue">Expert</span>
+    </div>
+    <div class="skill-row">
+      <span class="skill-name">HTML</span>
+      <div class="bar-bg"><div class="bar-fill bar-blue" style="width:95%"></div></div>
+      <span class="skill-pill pill-blue">Expert</span>
+    </div>
+    <div class="skill-section-label">Content Creation</div>
+    <div class="skill-row">
+      <span class="skill-name">Video editing</span>
+      <div class="bar-bg"><div class="bar-fill bar-amber" style="width:45%"></div></div>
+      <span class="skill-pill pill-amber">Learning</span>
+    </div>
+    <div class="skill-row">
+      <span class="skill-name">Thumbnails</span>
+      <div class="bar-bg"><div class="bar-fill bar-amber" style="width:38%"></div></div>
+      <span class="skill-pill pill-amber">Learning</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Current Project</div>
+    <div class="project-block">
+      <div class="live-dot"></div>
+      <div>
+        <div class="project-name">Trapping On My School's Toxic SMP</div>
+        <div class="project-desc">Active · Filming and editing</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Why I Want to Join</div>
+    <p class="about-text">I want to bring good PvP to the server and be an active member. I can also help with any coding the server needs. I'm working on content and getting better at editing every day.</p>
+  </div>
+
+</div>
+</body>
+</html>
